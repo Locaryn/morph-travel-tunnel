@@ -1,24 +1,57 @@
 {
   "$schema": "https://locaryn.dev/schema/plugin.json/v0.1",
   "apiVersion": "0.1",
-  "name": "plugin-remote",
-  "version": "1.0.0",
-  "description": "Remote access with encrypted outbound tunnels (Cloudflare, ngrok, devtunnel) and QR pairing.",
+  "name": "plugin-travel-tunnel",
+  "version": "1.1.0",
+  "description": "Mode distant sécurisé avec tunnels sortants chiffrés (Cloudflare, ngrok, devtunnel) et appairage QR code pour mobile.",
   "author": "Locaryn Team",
   "license": "Apache-2.0",
   "homepage": "https://github.com/Locaryn/plugin-travel-tunnel",
   "repository": "https://github.com/Locaryn/plugin-travel-tunnel",
-  "keywords": ["remote-mode", "remote-access", "tunnels", "cloudflare", "ngrok", "qr-pairing"],
+  "keywords": [
+    "travel-tunnel",
+    "remote-mode",
+    "tunnels",
+    "cloudflare",
+    "ngrok",
+    "qr-pairing"
+  ],
   "permissions": {
-    "network": true
+    "mcp": {
+      "reason": "Lancer le gestionnaire de tunnels distants chiffrés."
+    },
+    "network": {
+      "reason": "Établir des tunnels HTTPS sortants et générer des jetons d'accès."
+    }
   },
-  "capabilities": ["travel-tunnel"],
+  "components": {
+    "skills": [
+      "SKILL.md"
+    ],
+    "mcp": "mcp/mcp.json"
+  },
+  "capabilities": [
+    "travel-tunnel"
+  ],
   "ui_contributions": {
-    "settings_tabs": [
+    "slots": [
       {
-        "id": "remote-settings",
-        "label": "Remote & Tunnels",
-        "icon": "cloud"
+        "id": "remote-settings-studio",
+        "slot": "studio.tabs",
+        "order": 35,
+        "label": "Tunnels & Accès Distant",
+        "icon": "cloud",
+        "type": "custom-element",
+        "entry": "dist/ui.js",
+        "tag": "locaryn-remote-panel",
+        "hint": "Configuration des tunnels Cloudflare/ngrok et appairage mobile"
+      }
+    ],
+    "nav_items": [
+      {
+        "id": "studio",
+        "label": "Studio de génération",
+        "icon": "image"
       }
     ]
   }

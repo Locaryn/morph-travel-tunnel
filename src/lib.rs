@@ -1,13 +1,9 @@
 //! Locaryn Remote Mode & Tunneling Plugin
-//!
-//! Exposes encrypted outbound tunnels (Cloudflare, ngrok, devtunnel) with QR pairing
-//! for remote connection on the mobile app.
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TunnelRequest {
-    pub provider: String, // "cloudflare", "ngrok", "devtunnel"
+    pub provider: String,
     pub port: u16,
 }
 
@@ -22,6 +18,6 @@ pub async fn start_remote_tunnel(req: TunnelRequest) -> Result<TunnelStatus, Str
     Ok(TunnelStatus {
         active: true,
         public_url: Some(format!("https://locaryn-{}.trycloudflare.com", req.port)),
-        qr_code_data: Some("data:image/png;base64,...".to_string()),
+        qr_code_data: Some("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==".into()),
     })
 }

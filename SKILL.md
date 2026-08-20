@@ -1,8 +1,8 @@
 ---
 name: remote-mode
-description: Launch encrypted remote tunnels and generate mobile pairing QR codes.
+description: Lancer des tunnels sortants chiffrés et générer des QR codes pour connecter les appareils mobiles.
 ---
 
-# Remote Mode Skill
+# Compétence Mode Distant & Tunnels
 
-Use `start_remote_tunnel` when connecting mobile clients over the internet.
+Utilisez `start_remote_tunnel` lorsque l'utilisateur demande d'activer l'accès distant ou d'appairer son smartphone.
