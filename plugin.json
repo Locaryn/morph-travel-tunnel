@@ -1,13 +1,13 @@
 {
   "$schema": "https://locaryn.dev/schema/plugin.json/v0.1",
   "apiVersion": "0.1",
-  "name": "extension-travel-tunnel",
+  "name": "morph-travel-tunnel",
   "version": "1.1.0",
   "description": "Mode distant sécurisé avec tunnels sortants chiffrés (Cloudflare, ngrok, devtunnel) et appairage QR code pour mobile.",
   "author": "Locaryn Team",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/Locaryn/extension-travel-tunnel",
-  "repository": "https://github.com/Locaryn/extension-travel-tunnel",
+  "homepage": "https://github.com/Locaryn/morph-travel-tunnel",
+  "repository": "https://github.com/Locaryn/morph-travel-tunnel",
   "keywords": [
     "travel-tunnel",
     "remote-mode",
