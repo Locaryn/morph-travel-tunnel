@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "remote": {
-      "command": "${LOCARYN_PLUGIN_ROOT}/bin/locaryn-remote-mcp",
+      "command": "${LOCARYN_MORPH_ROOT}/bin/locaryn-remote-mcp",
       "args": [],
       "env": {
         "RUST_LOG": "warn"
