@@ -14,10 +14,9 @@ pub struct TunnelStatus {
     pub qr_code_data: Option<String>,
 }
 
-pub async fn start_remote_tunnel(req: TunnelRequest) -> Result<TunnelStatus, String> {
-    Ok(TunnelStatus {
-        active: true,
-        public_url: Some(format!("https://locaryn-{}.trycloudflare.com", req.port)),
-        qr_code_data: Some("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==".into()),
-    })
+/// Non implemente. La signature est conservee pour que l'interface et le
+/// serveur MCP gardent leur forme, mais l'appel echoue franchement plutot
+/// que de fabriquer un resultat.
+pub async fn start_remote_tunnel(_req: TunnelRequest) -> Result<TunnelStatus, String> {
+    Err("L'ouverture du tunnel n'est pas implementee : ce morph ne joint aucun service. L'URL publique renvoyee auparavant etait inventee.".into())
 }
