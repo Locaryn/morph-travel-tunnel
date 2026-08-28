@@ -1,5 +1,7 @@
 //! Stdio MCP server shipped by plugin-travel-tunnel.
-use locaryn_plugin_remote::{start_remote_tunnel, TunnelRequest};
+use locaryn_plugin_remote::{
+    list_providers, start_remote_tunnel, stop_remote_tunnel, tunnel_status, TunnelRequest,
+};
 use serde_json::{json, Value};
 use std::io::Write;
 use tokio::io::{AsyncBufReadExt, BufReader};
@@ -64,16 +66,34 @@ fn tools_list() -> Value {
     json!({
         "tools": [
             {
+                "name": "list_providers",
+                "description": "Les relais de tunnel connus, et lesquels sont installés ici.                                 `needs_account` dit lequel exige une inscription avant de servir ;                                 `install_hint` dit comment obtenir celui qui manque.",
+                "inputSchema": { "type": "object", "properties": {} }
+            },
+            {
                 "name": "start_remote_tunnel",
-                "description": "Démarre un tunnel chiffré sortant pour connecter l'application mobile en déplacement.",
+                "description": "Ouvre un tunnel sortant vers un port local et rend l'adresse                                 publique que le relais annonce. Un seul tunnel à la fois.                                 L'ouverture peut prendre jusqu'à une minute : le premier                                 lancement d'un relais est lent.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "provider": { "type": "string", "enum": ["cloudflare", "ngrok", "devtunnel"], "description": "Fournisseur de tunnel sortant" },
-                        "port": { "type": "integer", "description": "Port local du démon Locaryn (défaut: 54321)" }
+                        "port": { "type": "integer", "description": "Port local à exposer" },
+                        "provider": {
+                            "type": "string",
+                            "description": "cloudflare, ngrok ou devtunnel. Omis : le premier relais installé, Cloudflare en tête puisqu'il ne demande pas de compte."
+                        }
                     },
-                    "required": ["provider", "port"]
+                    "required": ["port"]
                 }
+            },
+            {
+                "name": "tunnel_status",
+                "description": "L'état du tunnel, sans rien ouvrir ni fermer.",
+                "inputSchema": { "type": "object", "properties": {} }
+            },
+            {
+                "name": "stop_remote_tunnel",
+                "description": "Ferme le tunnel. Fermer quand il n'y en a pas n'est pas une erreur.",
+                "inputSchema": { "type": "object", "properties": {} }
             }
         ]
     })
@@ -81,11 +101,13 @@ fn tools_list() -> Value {
 
 async fn call_tool(name: &str, args: Value) -> Result<Value, String> {
     match name {
+        "list_providers" => Ok(json!({ "providers": list_providers() })),
+        "tunnel_status" => Ok(json!(tunnel_status().await)),
+        "stop_remote_tunnel" => Ok(json!(stop_remote_tunnel().await)),
         "start_remote_tunnel" => {
             let req: TunnelRequest = serde_json::from_value(args)
-                .map_err(|e| format!("Paramètres tunnel invalides: {e}"))?;
-            let res = start_remote_tunnel(req).await?;
-            Ok(json!(res))
+                .map_err(|e| format!("Paramètres de tunnel invalides : {e}"))?;
+            Ok(json!(start_remote_tunnel(req).await?))
         }
         _ => Err(format!("Outil tunnel inconnu : {name}")),
     }
