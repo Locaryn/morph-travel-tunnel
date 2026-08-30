@@ -2,8 +2,8 @@
   "$schema": "https://locaryn.dev/schema/morph.json/v0.1",
   "apiVersion": "0.1",
   "name": "morph-travel-tunnel",
-  "version": "2.2.0-beta.1",
-  "description": "Rendre la machine joignable de l'extérieur par un tunnel sortant (Cloudflare, ngrok, tunnels Microsoft), sans rien ouvrir sur la box.",
+  "version": "3.0.0",
+  "description": "Ajoute deux modes d'appairage aux réglages serveur : un port joignable de l'extérieur, et un tunnel sortant vers un relais (Cloudflare, ngrok, tunnels Microsoft) sans rien ouvrir sur la box.",
   "author": "Locaryn Team",
   "license": "Apache-2.0",
   "homepage": "https://github.com/Locaryn/morph-travel-tunnel",
@@ -36,28 +36,40 @@
   "ui_contributions": {
     "slots": [
       {
-        "id": "remote-settings-studio",
-        "slot": "studio.tabs",
-        "order": 35,
-        "label": "Tunnels & Accès Distant",
+        "id": "pairing-public",
+        "slot": "settings.server.pairing",
+        "order": 10,
+        "label": "Accès distant",
+        "icon": "server",
+        "type": "custom-element",
+        "entry": "dist/ui.js",
+        "tag": "locaryn-pairing-public",
+        "hint": "Pour une adresse publique ou un port redirigé vers cette machine. Le QR porte l'adresse, le port et l'empreinte."
+      },
+      {
+        "id": "pairing-tunnel",
+        "slot": "settings.server.pairing",
+        "order": 20,
+        "label": "Tunnel",
         "icon": "cloud",
         "type": "custom-element",
         "entry": "dist/ui.js",
-        "tag": "locaryn-remote-panel",
-        "hint": "Configuration des tunnels Cloudflare/ngrok et appairage mobile"
-      }
-    ],
-    "nav_items": [
-      {
-        "id": "studio",
-        "label": "Studio de génération",
-        "icon": "image"
+        "tag": "locaryn-pairing-tunnel",
+        "hint": "Un tunnel sortant vers un relais : rien à ouvrir sur la box. Le QR porte l'adresse que le relais annonce."
       }
     ]
   },
-  "beta": true,
-  "stability": "untested",
+  "beta": false,
+  "stability": "tested",
   "versions": [
+    {
+      "version": "3.0.0",
+      "is_beta": false,
+      "summary": "Les deux modes d'appairage s'ajoutent aux réglages serveur ; le tunnel est celui du service, plus celui du morph.",
+      "tag": "v3.0.0",
+      "released_at": "2026-08-30",
+      "install_source": "Locaryn/morph-travel-tunnel#v3.0.0"
+    },
     {
       "version": "2.2.0-beta.1",
       "is_beta": true,
