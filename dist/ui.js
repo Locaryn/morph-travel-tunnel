@@ -19,6 +19,26 @@
     return c && typeof c.demanderCode === "function" ? c : null;
   }
 
+  // Une preference d'affichage, gardee sur cette machine seulement. Enveloppee
+  // parce qu'un navigateur en navigation privee refuse d'ecrire, et qu'un
+  // panneau ne doit pas se briser pour si peu.
+  function lire(cle, defaut) {
+    try {
+      const v = window.localStorage.getItem(cle);
+      return v === null ? defaut : v;
+    } catch {
+      return defaut;
+    }
+  }
+
+  function ecrire(cle, valeur) {
+    try {
+      window.localStorage.setItem(cle, valeur);
+    } catch {
+      // Stockage indisponible : la valeur vaut pour cette session, c'est tout.
+    }
+  }
+
   function vider(el) {
     while (el.firstChild) el.removeChild(el.firstChild);
   }
@@ -204,6 +224,9 @@
       this.erreur = null;
       this.occupe = false;
       this.charge = false;
+      // Le serveur vers lequel renvoyer, quand le relais en reclame un. Garde
+      // d'une session a l'autre : personne ne veut retaper son serveur.
+      this.cible = lire("morph-remote-cible", "");
     }
 
     connectedCallback() {
@@ -260,7 +283,11 @@
       this.rendre();
       try {
         const actif = Boolean(this.etat && this.etat.active);
-        this.etat = await h.reglerPartage(actif ? null : this.choisi);
+        const relais = this.relais.find((r) => r.id === this.choisi);
+        // Un seul champ pour le service : le relais, puis ce qu'il lui faut.
+        const demande =
+          relais && relais.needs_target ? `${this.choisi}:${this.cible.trim()}` : this.choisi;
+        this.etat = await h.reglerPartage(actif ? null : demande);
         if (!this.etat || !this.etat.active) this.code = null;
         await this.rafraichir();
       } catch (err) {
@@ -324,7 +351,11 @@
         this.occupe ? "…" : actif ? "Fermer le tunnel" : "Ouvrir le tunnel",
       );
       bouton.type = "button";
-      bouton.disabled = this.occupe || (!actif && this.choisi === "");
+      bouton.setAttribute("data-role", "basculer");
+      const relaisChoisi = this.relais.find((r) => r.id === this.choisi);
+      const cibleManquante =
+        Boolean(relaisChoisi && relaisChoisi.needs_target) && this.cible.trim() === "";
+      bouton.disabled = this.occupe || (!actif && (this.choisi === "" || cibleManquante));
       bouton.addEventListener("click", () => void this.basculer());
       ligne.appendChild(bouton);
 
@@ -332,6 +363,34 @@
       this.appendChild(bloc);
 
       const relais = this.relais.find((r) => r.id === this.choisi);
+
+      if (relais && relais.needs_target) {
+        const bloc2 = creer("div", "locaryn-pairing-public");
+        const et2 = creer("label", "locaryn-pairing-select-label", "Votre serveur");
+        et2.htmlFor = "morph-remote-cible";
+        bloc2.appendChild(et2);
+        const champ = creer("input", "locaryn-input");
+        champ.id = "morph-remote-cible";
+        champ.placeholder = "moi@serveur.fr:8443";
+        champ.value = this.cible;
+        champ.disabled = this.occupe || actif;
+        champ.addEventListener("input", (e) => {
+          this.cible = e.target.value;
+          ecrire("morph-remote-cible", this.cible);
+          const b = this.querySelector("[data-role=basculer]");
+          if (b) b.disabled = this.occupe || this.cible.trim() === "";
+        });
+        bloc2.appendChild(champ);
+        bloc2.appendChild(
+          creer(
+            "p",
+            "locaryn-field-hint",
+            "Le port que le serveur ouvrira. Ajoutez « /2222 » si son SSH n'écoute pas sur 22. La clé vient de votre agent SSH — Locaryn n'en manipule aucune.",
+          ),
+        );
+        this.appendChild(bloc2);
+      }
+
       if (relais && !relais.installed && !actif) {
         this.appendChild(notice(relais.install_hint));
       }

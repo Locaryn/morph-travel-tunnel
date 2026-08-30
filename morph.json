@@ -2,7 +2,7 @@
   "$schema": "https://locaryn.dev/schema/morph.json/v0.1",
   "apiVersion": "0.1",
   "name": "morph-travel-tunnel",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Ajoute deux modes d'appairage aux réglages serveur : un port joignable de l'extérieur, et un tunnel sortant vers un relais (Cloudflare, ngrok, tunnels Microsoft) sans rien ouvrir sur la box.",
   "author": "Locaryn Team",
   "license": "Apache-2.0",
@@ -62,6 +62,14 @@
   "beta": false,
   "stability": "tested",
   "versions": [
+    {
+      "version": "3.1.0",
+      "is_beta": false,
+      "summary": "Quatrième relais : votre propre serveur, par renvoi de port SSH. Ni compte, ni quota, ni tiers.",
+      "tag": "v3.1.0",
+      "released_at": "2026-08-30",
+      "install_source": "Locaryn/morph-travel-tunnel#v3.1.0"
+    },
     {
       "version": "3.0.0",
       "is_beta": false,
